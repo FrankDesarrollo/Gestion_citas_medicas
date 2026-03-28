@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+
+{% block contenido %}
+
+<!-- Encabezado con botón Crear -->
+<div class="table-container">
+    <div class="table-header">
+        <div>
+            <h5 class="mb-0" style="font-family:'Nunito',sans-serif; font-weight:700;">
+                {{ titulo }}
+            </h5>
+            <small class="text-muted">{{ total_registros }} registro(s) encontrado(s)</small>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+            <!-- Búsqueda -->
+            <form method="get" class="d-flex gap-2">
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ busqueda }}"
+                    class="form-control form-control-sm"
+                    placeholder="Buscar..."
+                    style="width:200px;"
+                >
+                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-search"></i>
+                </button>
+                {% if busqueda %}
+                <a href="?" class="btn btn-sm btn-outline-danger"><i class="bi bi-x"></i></a>
+                {% endif %}
+            </form>
+
+            <!-- Botón Crear: solo si tiene permiso -->
+            {% if puede_crear %}
+            <a href="{% url url_crear %}" class="btn-crear btn">
+                <i class="bi bi-plus-lg me-1"></i> Nuevo
+            </a>
+            {% else %}
+            <span class="badge bg-secondary d-flex align-items-center gap-1" style="padding:.4rem .7rem; border-radius:8px;">
+                <i class="bi bi-lock-fill"></i>
+                Su rol no puede crear
+            </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Tabla de datos -->
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    {% block cabeceras_tabla %}{% endblock %}
+                    <th style="width:130px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% block filas_tabla %}{% endblock %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginación -->
+    {% if page_obj.has_other_pages %}
+    <div class="d-flex justify-content-between align-items-center px-3 py-2" style="border-top:1px solid #f0f4f8;">
+        <small class="text-muted">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        </small>
+        <nav>
+            <ul class="pagination pagination-sm mb-0">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ busqueda }}">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}&q={{ busqueda }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ busqueda }}">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

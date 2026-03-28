@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Gestión de Citas Médicas{% endblock %}</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primario: #1a5276;
+            --color-secundario: #2e86c1;
+            --color-acento: #1abc9c;
+            --color-peligro: #e74c3c;
+            --color-advertencia: #f39c12;
+            --color-exito: #27ae60;
+            --color-fondo: #f0f4f8;
+            --color-sidebar: #0d2137;
+            --sidebar-width: 260px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--color-fondo);
+            color: #2c3e50;
+        }
+
+        h1, h2, h3, h4, h5, .navbar-brand {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+        }
+
+        /* ── SIDEBAR ── */
+        #sidebar {
+            width: var(--sidebar-width);
+            min-height: 100vh;
+            background: var(--color-sidebar);
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            transition: transform .3s ease;
+            overflow-y: auto;
+        }
+
+        #sidebar .sidebar-brand {
+            padding: 1.5rem 1.2rem;
+            background: rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        #sidebar .sidebar-brand h5 {
+            color: var(--color-acento);
+            font-size: .9rem;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #sidebar .sidebar-brand .logo-icon {
+            font-size: 2rem;
+            color: white;
+        }
+
+        /* Badge de rol en sidebar */
+        #sidebar .rol-badge {
+            margin: .8rem 1.2rem;
+            padding: .4rem .8rem;
+            border-radius: 20px;
+            font-size: .72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .rol-administrativo { background: #8e44ad; color: white; }
+        .rol-medico          { background: #2980b9; color: white; }
+        .rol-paciente        { background: #27ae60; color: white; }
+        .rol-auxiliar_medico { background: #e67e22; color: white; }
+
+        /* Nav links del sidebar */
+        #sidebar .nav-section-title {
+            color: rgba(255,255,255,0.4);
+            font-size: .65rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 1rem 1.2rem .3rem;
+            font-weight: 700;
+        }
+
+        #sidebar .nav-link {
+            color: rgba(255,255,255,0.75);
+            padding: .6rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            font-size: .875rem;
+            transition: all .2s;
+            border-left: 3px solid transparent;
+        }
+
+        #sidebar .nav-link:hover,
+        #sidebar .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.08);
+            border-left-color: var(--color-acento);
+        }
+
+        #sidebar .nav-link i {
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Permisos bloqueados */
+        #sidebar .nav-link.bloqueado {
+            color: rgba(255,255,255,0.25);
+            cursor: not-allowed;
+        }
+
+        #sidebar .sidebar-footer {
+            margin-top: auto;
+            padding: 1rem 1.2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* ── CONTENIDO PRINCIPAL ── */
+        #main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── TOPBAR ── */
+        #topbar {
+            background: white;
+            padding: .75rem 1.5rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 500;
+        }
+
+        #topbar .page-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin: 0;
+        }
+
+        /* ── CONTENIDO ── */
+        .content-area {
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        /* ── CARDS ── */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.07);
+        }
+
+        .card-header {
+            background: white;
+            border-bottom: 2px solid var(--color-fondo);
+            padding: 1rem 1.25rem;
+            border-radius: 10px 10px 0 0 !important;
+        }
+
+        /* ── TABLAS ── */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.07);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1rem 1.25rem;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--color-fondo);
+        }
+
+        .table th {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: #7f8c8d;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .table td { vertical-align: middle; font-size: .875rem; }
+
+        /* ── BOTONES ── */
+        .btn-crear {
+            background: var(--color-acento);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: .45rem .9rem;
+            font-weight: 600;
+            font-size: .875rem;
+        }
+        .btn-crear:hover { background: #17a589; color: white; }
+
+        .btn-accion {
+            padding: .25rem .5rem;
+            font-size: .78rem;
+            border-radius: 6px;
+        }
+
+        /* ── BADGES DE ESTADO ── */
+        .badge-activo   { background: #d5f5e3; color: #1e8449; }
+        .badge-inactivo { background: #fadbd8; color: #922b21; }
+
+        /* ── ALERTAS/MENSAJES ── */
+        .alert { border-radius: 8px; border: none; }
+
+        /* ── FORMULARIOS ── */
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1.5px solid #dde1e7;
+            font-size: .875rem;
+            transition: border-color .2s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--color-secundario);
+            box-shadow: 0 0 0 3px rgba(46,134,193,.15);
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: .82rem;
+            color: #5d6d7e;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+        }
+
+        /* ── PAGINACIÓN ── */
+        .page-link { color: var(--color-secundario); border-radius: 6px; margin: 0 2px; }
+        .page-item.active .page-link { background: var(--color-primario); border-color: var(--color-primario); }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            #sidebar { transform: translateX(-100%); }
+            #sidebar.show { transform: translateX(0); }
+            #main-content { margin-left: 0; }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+{% if user.is_authenticated %}
+<!-- ════════════════════ SIDEBAR ════════════════════ -->
+<nav id="sidebar">
+    <!-- Brand -->
+    <div class="sidebar-brand">
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <i class="bi bi-hospital logo-icon"></i>
+            <div>
+                <h5 class="mb-0">ClínicaSoft</h5>
+                <small style="color:rgba(255,255,255,0.5); font-size:.7rem;">Sistema de Citas Médicas</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Badge de ROL -->
+    <div>
+        <span class="rol-badge rol-{{ rol }}">
+            <i class="bi bi-person-badge me-1"></i>
+            {{ nombre_rol|default:rol }}
+        </span>
+        <small class="d-block px-3 text-white-50" style="font-size:.7rem;">
+            {{ user.get_full_name|default:user.username }}
+        </small>
+    </div>
+
+    <!-- Navegación -->
+    <nav class="mt-2">
+        <p class="nav-section-title">Principal</p>
+        <a href="{% url 'menu_principal' %}" class="nav-link {% if request.resolver_match.url_name == 'menu_principal' %}active{% endif %}">
+            <i class="bi bi-grid-1x2"></i> Dashboard
+        </a>
+
+        <p class="nav-section-title">Maestros</p>
+
+        <a href="{% url 'departamentos_lista' %}" class="nav-link {% if 'departamentos' in request.path %}active{% endif %}">
+            <i class="bi bi-map"></i> Departamentos
+        </a>
+
+        <a href="{% url 'municipios_lista' %}" class="nav-link {% if 'municipios' in request.path %}active{% endif %}">
+            <i class="bi bi-geo-alt"></i> Municipios
+        </a>
+
+        <a href="{% url 'sedes_lista' %}" class="nav-link {% if 'sedes' in request.path %}active{% endif %}">
+            <i class="bi bi-building"></i> Sedes
+        </a>
+
+        <a href="{% url 'consultorios_lista' %}" class="nav-link {% if 'consultorios' in request.path %}active{% endif %}">
+            <i class="bi bi-door-open"></i> Consultorios
+        </a>
+
+        {% if es_admin or es_medico or es_auxiliar %}
+        <p class="nav-section-title">Citas</p>
+        <a href="#" class="nav-link bloqueado" title="Próximamente">
+            <i class="bi bi-calendar-check"></i> Citas Médicas
+            <span class="badge bg-secondary ms-auto" style="font-size:.6rem;">Pronto</span>
+        </a>
+        {% endif %}
+
+        {% if es_admin %}
+        <p class="nav-section-title">Administración</p>
+        <a href="#" class="nav-link bloqueado" title="Próximamente">
+            <i class="bi bi-people"></i> Usuarios
+        </a>
+        <a href="#" class="nav-link bloqueado" title="Próximamente">
+            <i class="bi bi-shield-check"></i> Auditoría
+        </a>
+        {% endif %}
+    </nav>
+
+    <!-- Footer del sidebar -->
+    <div class="sidebar-footer">
+        <a href="{% url 'logout' %}" class="nav-link text-danger">
+            <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+        </a>
+    </div>
+</nav>
+<!-- ════════════════════ FIN SIDEBAR ════════════════════ -->
+
+<!-- ════════════════════ CONTENIDO PRINCIPAL ════════════════════ -->
+<div id="main-content">
+    <!-- Topbar -->
+    <div id="topbar">
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-sm btn-outline-secondary d-md-none" id="sidebar-toggle">
+                <i class="bi bi-list"></i>
+            </button>
+            <h6 class="page-title">{% block page_title %}Sistema de Citas Médicas{% endblock %}</h6>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <span class="badge text-bg-light border">
+                <i class="bi bi-clock me-1"></i>
+                <span id="reloj"></span>
+            </span>
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="bi bi-person-circle me-1"></i>
+                    {{ user.get_full_name|default:user.username }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><span class="dropdown-item-text text-muted" style="font-size:.8rem;">Rol: {{ nombre_rol|default:rol }}</span></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                        <i class="bi bi-box-arrow-left me-2"></i>Cerrar Sesión
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensajes del sistema -->
+    <div class="px-4 pt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Área de contenido -->
+    <div class="content-area">
+        {% block contenido %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-3 text-muted" style="font-size:.75rem; border-top: 1px solid #e9ecef; background:white;">
+        Sistema de Gestión de Citas Médicas &mdash; Oracle XE 18c + Django MVT &mdash; Materia Electiva
+    </footer>
+</div>
+<!-- ════════════════════ FIN CONTENIDO ════════════════════ -->
+
+{% else %}
+<!-- Sin autenticación: solo el bloque de contenido -->
+{% block contenido %}{% endblock %}
+{% endif %}
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Reloj en topbar
+    function actualizarReloj() {
+        const el = document.getElementById('reloj');
+        if (el) {
+            el.textContent = new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+        }
+    }
+    actualizarReloj();
+    setInterval(actualizarReloj, 1000);
+
+    // Toggle sidebar en móvil
+    const toggleBtn = document.getElementById('sidebar-toggle');
+    const sidebar = document.getElementById('sidebar');
+    if (toggleBtn && sidebar) {
+        toggleBtn.addEventListener('click', () => sidebar.classList.toggle('show'));
+    }
+
+    // Auto-dismiss alertas después de 5 segundos
+    setTimeout(() => {
+        document.querySelectorAll('.alert').forEach(a => {
+            const alert = bootstrap.Alert.getOrCreateInstance(a);
+            if (alert) alert.close();
+        });
+    }, 5000);
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

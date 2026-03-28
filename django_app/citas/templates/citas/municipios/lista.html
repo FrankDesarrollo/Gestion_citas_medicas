@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block titulo %}Municipios{% endblock %}
+{% block page_title %}Gestión de Municipios{% endblock %}
+{% block contenido %}
+<div class="table-container">
+  <div class="table-header">
+    <div>
+      <h5 class="mb-0" style="font-family:'Nunito',sans-serif;font-weight:700;"><i class="bi bi-geo-alt me-2 text-success"></i>Municipios</h5>
+      <small class="text-muted">{{ total_registros }} registro(s)</small>
+    </div>
+    <div class="d-flex gap-2 align-items-center">
+      <form method="get" class="d-flex gap-2">
+        <select name="departamento" class="form-select form-select-sm" style="width:180px;" onchange="this.form.submit()">
+          <option value="">Todos los departamentos</option>
+          {% for dep in departamentos %}<option value="{{ dep.id_departamento }}" {% if dep.id_departamento|stringformat:"s" == departamento_seleccionado %}selected{% endif %}>{{ dep.nombre_departamento }}</option>{% endfor %}
+        </select>
+        <input type="text" name="q" value="{{ busqueda }}" class="form-control form-control-sm" placeholder="Buscar..." style="width:160px;">
+        <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-search"></i></button>
+        {% if busqueda %}<a href="?" class="btn btn-sm btn-outline-danger"><i class="bi bi-x"></i></a>{% endif %}
+      </form>
+      {% if puede_crear %}
+      <a href="{% url 'municipios_crear' %}" class="btn-crear btn"><i class="bi bi-plus-lg me-1"></i>Nuevo</a>
+      {% else %}
+      <span class="badge bg-secondary p-2"><i class="bi bi-lock-fill me-1"></i>Sin permiso</span>
+      {% endif %}
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>ID</th><th>Código DANE</th><th>Municipio</th><th>Departamento</th><th>Estado</th><th style="width:150px;">Acciones</th></tr></thead>
+      <tbody>
+        {% for mun in municipios %}
+        <tr>
+          <td><small class="text-muted">{{ mun.id_municipio }}</small></td>
+          <td><code>{{ mun.codigo_dane }}</code></td>
+          <td><strong>{{ mun.nombre_municipio }}</strong></td>
+          <td>{{ mun.id_departamento.nombre_departamento }}</td>
+          <td>{% if mun.activo == 'S' %}<span class="badge badge-activo rounded-pill px-2">Activo</span>{% else %}<span class="badge badge-inactivo rounded-pill px-2">Inactivo</span>{% endif %}</td>
+          <td>
+            <a href="{% url 'municipios_detalle' mun.id_municipio %}" class="btn btn-accion btn-outline-info" title="Ver"><i class="bi bi-eye"></i></a>
+            {% if puede_editar %}<a href="{% url 'municipios_editar' mun.id_municipio %}" class="btn btn-accion btn-outline-warning" title="Editar"><i class="bi bi-pencil"></i></a>{% endif %}
+            {% if puede_eliminar %}<a href="{% url 'municipios_eliminar' mun.id_municipio %}" class="btn btn-accion btn-outline-danger" title="Desactivar"><i class="bi bi-trash3"></i></a>{% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="text-center text-muted py-4"><i class="bi bi-inbox" style="font-size:2rem;display:block;margin-bottom:.5rem;"></i>No se encontraron municipios</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if municipios.has_other_pages %}
+  <div class="d-flex justify-content-between align-items-center px-3 py-2" style="border-top:1px solid #f0f4f8;">
+    <small class="text-muted">Página {{ municipios.number }} de {{ municipios.paginator.num_pages }}</small>
+    <nav><ul class="pagination pagination-sm mb-0">
+      {% if municipios.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ municipios.previous_page_number }}&q={{ busqueda }}"><i class="bi bi-chevron-left"></i></a></li>{% endif %}
+      {% if municipios.has_next %}<li class="page-item"><a class="page-link" href="?page={{ municipios.next_page_number }}&q={{ busqueda }}"><i class="bi bi-chevron-right"></i></a></li>{% endif %}
+    </ul></nav>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

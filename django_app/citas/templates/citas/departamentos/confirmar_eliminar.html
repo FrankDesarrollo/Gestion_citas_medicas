@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white d-flex align-items-center gap-2">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <strong>{{ titulo }}</strong>
+            </div>
+            <div class="card-body text-center p-4">
+                <i class="bi bi-trash3-fill text-danger" style="font-size:3rem;"></i>
+                <h5 class="mt-3 mb-2" style="font-family:'Nunito',sans-serif;">¿Está seguro?</h5>
+                <p class="text-muted">
+                    Esta acción <strong>desactivará</strong> el registro (soft delete).
+                    El registro no se eliminará físicamente de la base de datos.
+                </p>
+
+                <!-- Mostrar el objeto a eliminar -->
+                {% if departamento %}
+                <div class="alert alert-warning text-start">
+                    <strong>Departamento:</strong> {{ departamento.nombre_departamento }}<br>
+                    <strong>Código DANE:</strong> {{ departamento.codigo_dane }}
+                </div>
+                {% elif municipio %}
+                <div class="alert alert-warning text-start">
+                    <strong>Municipio:</strong> {{ municipio.nombre_municipio }}<br>
+                    <strong>Código DANE:</strong> {{ municipio.codigo_dane }}
+                </div>
+                {% elif sede %}
+                <div class="alert alert-warning text-start">
+                    <strong>Sede:</strong> {{ sede.nombre_sede }}<br>
+                    <strong>Código:</strong> {{ sede.codigo_sede }}
+                </div>
+                {% elif consultorio %}
+                <div class="alert alert-warning text-start">
+                    <strong>Consultorio:</strong> {{ consultorio.nombre_consultorio }}<br>
+                    <strong>Código:</strong> {{ consultorio.codigo_consultorio }}
+                </div>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2 justify-content-center mt-3">
+                        {% if departamento %}
+                        <a href="{% url 'departamentos_lista' %}" class="btn btn-outline-secondary">
+                        {% elif municipio %}
+                        <a href="{% url 'municipios_lista' %}" class="btn btn-outline-secondary">
+                        {% elif sede %}
+                        <a href="{% url 'sedes_lista' %}" class="btn btn-outline-secondary">
+                        {% else %}
+                        <a href="{% url 'consultorios_lista' %}" class="btn btn-outline-secondary">
+                        {% endif %}
+                            <i class="bi bi-x-circle me-1"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash3 me-1"></i> Sí, desactivar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-3" style="border-left:3px solid #e74c3c;">
+            <div class="card-body py-2 px-3">
+                <small class="text-muted">
+                    <i class="bi bi-info-circle-fill me-1 text-danger"></i>
+                    <strong>Nota DBA:</strong> Esta operación ejecuta un
+                    <code>UPDATE ... SET ACTIVO='N'</code> en Oracle (no es un DELETE físico).
+                    El registro queda en la tabla pero con estado <code>INACTIVO</code>.
+                    Solo el usuario <code>usr_administrativo</code> con <code>ROL_ADMINISTRATIVO</code>
+                    tiene permiso <code>UPDATE</code> en esta tabla.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

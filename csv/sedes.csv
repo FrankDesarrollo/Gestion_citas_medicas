@@ -1,0 +1,7 @@
+codigo_sede,nombre_sede,direccion,telefono,email,id_municipio,activo
+SED001,SEDE PRINCIPAL BOGOTÁ,Cra. 15 # 90-12,6014568900,sede.bogota@clinica.com,2,S
+SED002,SEDE NORTE MEDELLÍN,Cll. 30 # 65-40 El Poblado,6044521100,sede.medellin@clinica.com,1,S
+SED003,SEDE ATLÁNTICO,Cra. 53 # 68-120 El Prado,6055623300,sede.barranquilla@clinica.com,3,S
+SED004,SEDE CALI SUR,Av. 6 Norte # 30-11,6024789900,sede.cali@clinica.com,8,S
+SED005,SEDE BUCARAMANGA,Cll. 45 # 27-60 Cabecera,6077891100,sede.bucaramanga@clinica.com,7,S
+SED006,SEDE IBAGUÉ CENTRO,Cra. 4 # 13-30 Centro,6082345600,sede.ibague@clinica.com,9,S

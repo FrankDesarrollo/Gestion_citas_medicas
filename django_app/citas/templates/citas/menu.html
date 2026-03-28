@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block titulo %}Menú Principal – Citas Médicas{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block contenido %}
+
+<!-- Saludo -->
+<div class="mb-4">
+    <h4 class="mb-0" style="font-family:'Nunito',sans-serif; font-weight:800; color:#0d2137;">
+        Hola, {{ usuario.get_full_name|default:usuario.username }} 👋
+    </h4>
+    <p class="text-muted mb-0" style="font-size:.875rem;">
+        Ha ingresado como: <strong>{{ nombre_rol|default:rol }}</strong>
+    </p>
+</div>
+
+<!-- Cards de estadísticas rápidas -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card h-100" style="border-left: 4px solid #2e86c1;">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div style="background:#eaf4fb; border-radius:10px; padding:.8rem 1rem;">
+                    <i class="bi bi-map" style="font-size:1.5rem; color:#2e86c1;"></i>
+                </div>
+                <div>
+                    <div class="text-muted" style="font-size:.75rem; text-transform:uppercase; letter-spacing:.5px; font-weight:700;">Departamentos</div>
+                    <div style="font-size:1.6rem; font-weight:800; color:#0d2137; font-family:'Nunito',sans-serif;">
+                        {{ total_departamentos|default:"–" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card h-100" style="border-left: 4px solid #1abc9c;">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div style="background:#eafaf1; border-radius:10px; padding:.8rem 1rem;">
+                    <i class="bi bi-geo-alt" style="font-size:1.5rem; color:#1abc9c;"></i>
+                </div>
+                <div>
+                    <div class="text-muted" style="font-size:.75rem; text-transform:uppercase; letter-spacing:.5px; font-weight:700;">Municipios</div>
+                    <div style="font-size:1.6rem; font-weight:800; color:#0d2137; font-family:'Nunito',sans-serif;">
+                        {{ total_municipios|default:"–" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card h-100" style="border-left: 4px solid #8e44ad;">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div style="background:#f5eef8; border-radius:10px; padding:.8rem 1rem;">
+                    <i class="bi bi-building" style="font-size:1.5rem; color:#8e44ad;"></i>
+                </div>
+                <div>
+                    <div class="text-muted" style="font-size:.75rem; text-transform:uppercase; letter-spacing:.5px; font-weight:700;">Sedes</div>
+                    <div style="font-size:1.6rem; font-weight:800; color:#0d2137; font-family:'Nunito',sans-serif;">
+                        {{ total_sedes|default:"–" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card h-100" style="border-left: 4px solid #e67e22;">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div style="background:#fef5e7; border-radius:10px; padding:.8rem 1rem;">
+                    <i class="bi bi-door-open" style="font-size:1.5rem; color:#e67e22;"></i>
+                </div>
+                <div>
+                    <div class="text-muted" style="font-size:.75rem; text-transform:uppercase; letter-spacing:.5px; font-weight:700;">Consultorios</div>
+                    <div style="font-size:1.6rem; font-weight:800; color:#0d2137; font-family:'Nunito',sans-serif;">
+                        {{ total_consultorios|default:"–" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Accesos rápidos a módulos según ROL -->
+<h6 class="mb-3 text-muted" style="text-transform:uppercase; letter-spacing:1px; font-size:.75rem; font-weight:700;">
+    Módulos disponibles para su rol
+</h6>
+
+<div class="row g-3">
+
+    <!-- DEPARTAMENTOS -->
+    <div class="col-md-6 col-xl-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between mb-3">
+                    <i class="bi bi-map-fill" style="font-size:2rem; color:#2e86c1;"></i>
+                    {% if puede_gestionar_maestros %}
+                    <span class="badge" style="background:#d5f5e3; color:#1e8449; font-size:.7rem;">CRUD Completo</span>
+                    {% else %}
+                    <span class="badge" style="background:#d6eaf8; color:#1a5276; font-size:.7rem;">Solo Lectura</span>
+                    {% endif %}
+                </div>
+                <h6 style="font-family:'Nunito',sans-serif; font-weight:700;">Departamentos</h6>
+                <p class="text-muted mb-3" style="font-size:.8rem;">Gestión de departamentos del país.</p>
+                <a href="{% url 'departamentos_lista' %}" class="btn btn-sm btn-outline-primary w-100">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Ir al módulo
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MUNICIPIOS -->
+    <div class="col-md-6 col-xl-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between mb-3">
+                    <i class="bi bi-geo-alt-fill" style="font-size:2rem; color:#1abc9c;"></i>
+                    {% if puede_gestionar_maestros %}
+                    <span class="badge" style="background:#d5f5e3; color:#1e8449; font-size:.7rem;">CRUD Completo</span>
+                    {% else %}
+                    <span class="badge" style="background:#d6eaf8; color:#1a5276; font-size:.7rem;">Solo Lectura</span>
+                    {% endif %}
+                </div>
+                <h6 style="font-family:'Nunito',sans-serif; font-weight:700;">Municipios</h6>
+                <p class="text-muted mb-3" style="font-size:.8rem;">Municipios por departamento.</p>
+                <a href="{% url 'municipios_lista' %}" class="btn btn-sm btn-outline-success w-100">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Ir al módulo
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEDES -->
+    <div class="col-md-6 col-xl-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between mb-3">
+                    <i class="bi bi-building-fill" style="font-size:2rem; color:#8e44ad;"></i>
+                    {% if puede_gestionar_maestros %}
+                    <span class="badge" style="background:#d5f5e3; color:#1e8449; font-size:.7rem;">CRUD Completo</span>
+                    {% else %}
+                    <span class="badge" style="background:#d6eaf8; color:#1a5276; font-size:.7rem;">Solo Lectura</span>
+                    {% endif %}
+                </div>
+                <h6 style="font-family:'Nunito',sans-serif; font-weight:700;">Sedes</h6>
+                <p class="text-muted mb-3" style="font-size:.8rem;">Instalaciones de la institución.</p>
+                <a href="{% url 'sedes_lista' %}" class="btn btn-sm w-100" style="background:#8e44ad; color:white; border:none;">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Ir al módulo
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONSULTORIOS -->
+    <div class="col-md-6 col-xl-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between mb-3">
+                    <i class="bi bi-door-open-fill" style="font-size:2rem; color:#e67e22;"></i>
+                    {% if puede_gestionar_maestros %}
+                    <span class="badge" style="background:#d5f5e3; color:#1e8449; font-size:.7rem;">CRUD Completo</span>
+                    {% else %}
+                    <span class="badge" style="background:#d6eaf8; color:#1a5276; font-size:.7rem;">Solo Lectura</span>
+                    {% endif %}
+                </div>
+                <h6 style="font-family:'Nunito',sans-serif; font-weight:700;">Consultorios</h6>
+                <p class="text-muted mb-3" style="font-size:.8rem;">Consultorios por sede.</p>
+                <a href="{% url 'consultorios_lista' %}" class="btn btn-sm w-100" style="background:#e67e22; color:white; border:none;">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Ir al módulo
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Cuadro informativo de permisos del rol actual -->
+<div class="card mt-4">
+    <div class="card-header d-flex align-items-center gap-2">
+        <i class="bi bi-shield-check text-primary"></i>
+        <strong>Permisos de su Rol: {{ nombre_rol|default:rol }}</strong>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered mb-0" style="font-size:.82rem;">
+                <thead>
+                    <tr style="background:#f8f9fa;">
+                        <th>Módulo / Tabla Oracle</th>
+                        <th class="text-center">Consultar (SELECT)</th>
+                        <th class="text-center">Crear (INSERT)</th>
+                        <th class="text-center">Editar (UPDATE)</th>
+                        <th class="text-center">Eliminar (DELETE)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if es_admin %}
+                    <tr><td><i class="bi bi-map me-1"></i>Departamentos</td>
+                        <td class="text-center">✅</td><td class="text-center">✅</td><td class="text-center">✅</td><td class="text-center">✅</td></tr>
+                    <tr><td><i class="bi bi-geo-alt me-1"></i>Municipios</td>
+                        <td class="text-center">✅</td><td class="text-center">✅</td><td class="text-center">✅</td><td class="text-center">✅</td></tr>
+                    <tr><td><i class="bi bi-building me-1"></i>Sedes</td>
+                        <td class="text-center">✅</td><td class="text-center">✅</td><td class="text-center">✅</td><td class="text-center">✅</td></tr>
+                    <tr><td><i class="bi bi-door-open me-1"></i>Consultorios</td>
+                        <td class="text-center">✅</td><td class="text-center">✅</td><td class="text-center">✅</td><td class="text-center">✅</td></tr>
+                    {% elif es_medico %}
+                    <tr><td><i class="bi bi-map me-1"></i>Departamentos</td>
+                        <td class="text-center">✅</td><td class="text-center">❌</td><td class="text-center">❌</td><td class="text-center">❌</td></tr>
+                    <tr><td><i class="bi bi-geo-alt me-1"></i>Municipios</td>
+                        <td class="text-center">✅</td><td class="text-center">❌</td><td class="text-center">❌</td><td class="text-center">❌</td></tr>
+                    <tr><td><i class="bi bi-building me-1"></i>Sedes</td>
+                        <td class="text-center">✅</td><td class="text-center">❌</td><td class="text-center">❌</td><td class="text-center">❌</td></tr>
+                    <tr><td><i class="bi bi-door-open me-1"></i>Consultorios</td>
+                        <td class="text-center">✅</td><td class="text-center">❌</td><td class="text-center">❌</td><td class="text-center">❌</td></tr>
+                    {% elif es_auxiliar %}
+                    <tr><td><i class="bi bi-map me-1"></i>Departamentos</td>
+                        <td class="text-center">✅</td><td class="text-center">❌</td><td class="text-center">❌</td><td class="text-center">❌</td></tr>
+                    <tr><td><i class="bi bi-geo-alt me-1"></i>Municipios</td>
+                        <td class="text-center">✅</td><td class="text-center">❌</td><td class="text-center">❌</td><td class="text-center">❌</td></tr>
+                    <tr><td><i class="bi bi-building me-1"></i>Sedes</td>
+                        <td class="text-center">✅</td><td class="text-center">❌</td><td class="text-center">❌</td><td class="text-center">❌</td></tr>
+                    <tr><td><i class="bi bi-door-open me-1"></i>Consultorios</td>
+                        <td class="text-center">✅</td><td class="text-center">❌</td><td class="text-center">❌</td><td class="text-center">❌</td></tr>
+                    {% else %}
+                    <tr><td colspan="5" class="text-center text-muted">Solo puede consultar sus propios datos</td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

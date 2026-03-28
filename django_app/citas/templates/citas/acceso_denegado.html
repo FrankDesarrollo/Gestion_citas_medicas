@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block titulo %}Acceso Denegado{% endblock %}
+{% block page_title %}Acceso Denegado{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center mt-4">
+    <div class="col-lg-6 text-center">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-5">
+                <div style="font-size:4rem; margin-bottom:1rem;">🚫</div>
+                <h3 style="font-family:'Nunito',sans-serif; font-weight:800; color:#e74c3c;">
+                    Acceso Denegado
+                </h3>
+                <p class="text-muted mt-2 mb-4">
+                    Su rol <strong>{{ rol }}</strong> no tiene permisos para realizar esta acción.
+                    El sistema de roles de Oracle XE 18c ha rechazado la operación.
+                </p>
+                <div class="alert alert-warning text-start mb-4">
+                    <i class="bi bi-shield-exclamation me-2"></i>
+                    <strong>Información de seguridad:</strong><br>
+                    Esta acción requiere el privilegio <code>INSERT</code>, <code>UPDATE</code>
+                    o <code>DELETE</code> en la tabla de Oracle, el cual no está asignado al rol
+                    <code>{{ rol }}</code>. El DBA puede otorgar estos permisos con:
+                    <br><br>
+                    <code>GRANT INSERT ON app_citas.tabla TO rol_{{ rol|lower }};</code>
+                </div>
+                <div class="d-flex gap-2 justify-content-center">
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i> Volver
+                    </a>
+                    <a href="{% url 'menu_principal' %}" class="btn btn-primary">
+                        <i class="bi bi-grid me-1"></i> Ir al Menú
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

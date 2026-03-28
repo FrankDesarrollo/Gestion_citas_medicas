@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión – Gestión de Citas Médicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --azul-profundo: #0d2137;
+            --azul-medio:    #1a5276;
+            --azul-claro:    #2e86c1;
+            --verde-acento:  #1abc9c;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            background: var(--azul-profundo);
+            overflow: hidden;
+        }
+
+        /* Panel izquierdo: ilustración */
+        .panel-izquierdo {
+            flex: 1;
+            background: linear-gradient(135deg, var(--azul-profundo) 0%, var(--azul-medio) 60%, var(--azul-claro) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Círculos decorativos */
+        .panel-izquierdo::before,
+        .panel-izquierdo::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            opacity: .08;
+            background: white;
+        }
+        .panel-izquierdo::before {
+            width: 500px; height: 500px;
+            top: -150px; right: -150px;
+        }
+        .panel-izquierdo::after {
+            width: 300px; height: 300px;
+            bottom: -100px; left: -80px;
+        }
+
+        .panel-izquierdo h1 {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 2.4rem;
+            color: white;
+            text-align: center;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .panel-izquierdo h1 span { color: var(--verde-acento); }
+
+        .panel-izquierdo p {
+            color: rgba(255,255,255,.65);
+            text-align: center;
+            font-size: .95rem;
+            max-width: 320px;
+            line-height: 1.6;
+        }
+
+        .panel-izquierdo .icono-principal {
+            font-size: 5rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        /* Tarjetas de roles */
+        .roles-info {
+            margin-top: 2.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .6rem;
+            width: 100%;
+            max-width: 340px;
+            position: relative;
+        }
+
+        .rol-chip {
+            background: rgba(255,255,255,.1);
+            border: 1px solid rgba(255,255,255,.15);
+            border-radius: 8px;
+            padding: .5rem .8rem;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            color: white;
+            font-size: .78rem;
+            font-weight: 600;
+        }
+
+        .rol-chip i { font-size: 1rem; color: var(--verde-acento); }
+
+        /* Panel derecho: formulario */
+        .panel-derecho {
+            width: 440px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2.5rem;
+        }
+
+        .form-login {
+            width: 100%;
+        }
+
+        .form-login .logo-small {
+            font-size: 1.8rem;
+            color: var(--azul-medio);
+            margin-bottom: .5rem;
+        }
+
+        .form-login h2 {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: var(--azul-profundo);
+            margin-bottom: .3rem;
+        }
+
+        .form-login .subtitulo {
+            color: #7f8c8d;
+            font-size: .875rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group-custom {
+            position: relative;
+            margin-bottom: 1.1rem;
+        }
+
+        .input-group-custom label {
+            display: block;
+            font-size: .75rem;
+            font-weight: 700;
+            color: #5d6d7e;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: .4rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i.icono-campo {
+            position: absolute;
+            left: .9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aab7c4;
+            font-size: 1rem;
+            pointer-events: none;
+        }
+
+        .input-wrapper input,
+        .input-wrapper select {
+            width: 100%;
+            padding: .65rem 1rem .65rem 2.4rem;
+            border: 1.5px solid #dde1e7;
+            border-radius: 8px;
+            font-size: .9rem;
+            font-family: 'Lato', sans-serif;
+            background: #f8fafc;
+            transition: border-color .2s, box-shadow .2s;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .input-wrapper input:focus,
+        .input-wrapper select:focus {
+            outline: none;
+            border-color: var(--azul-claro);
+            box-shadow: 0 0 0 3px rgba(46,134,193,.15);
+            background: white;
+        }
+
+        /* Select flecha personalizada */
+        .input-wrapper select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23aab7c4' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right .9rem center;
+            padding-right: 2rem;
+        }
+
+        .btn-ingresar {
+            width: 100%;
+            padding: .75rem;
+            background: linear-gradient(135deg, var(--azul-medio), var(--azul-claro));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: .5rem;
+            transition: opacity .2s, transform .1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+        }
+
+        .btn-ingresar:hover { opacity: .92; transform: translateY(-1px); }
+        .btn-ingresar:active { transform: translateY(0); }
+
+        .alerta-error {
+            background: #fdecea;
+            border: 1px solid #f5c6c6;
+            color: #c0392b;
+            border-radius: 8px;
+            padding: .8rem 1rem;
+            font-size: .875rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .divider {
+            text-align: center;
+            color: #bdc3c7;
+            font-size: .75rem;
+            margin: 1.5rem 0 .5rem;
+        }
+
+        .nota-academica {
+            background: #eaf4fb;
+            border-left: 3px solid var(--azul-claro);
+            border-radius: 0 6px 6px 0;
+            padding: .7rem 1rem;
+            font-size: .75rem;
+            color: #2980b9;
+            margin-top: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .panel-izquierdo { display: none; }
+            .panel-derecho { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Panel Izquierdo: Información del sistema -->
+<div class="panel-izquierdo">
+    <i class="bi bi-hospital icono-principal"></i>
+    <h1>Sistema de <span>Citas Médicas</span></h1>
+    <p>Gestión integral de citas, consultorios y sedes para instituciones de salud.</p>
+
+    <div class="roles-info">
+        <div class="rol-chip"><i class="bi bi-person-badge"></i> Médico</div>
+        <div class="rol-chip"><i class="bi bi-person-heart"></i> Paciente</div>
+        <div class="rol-chip"><i class="bi bi-clipboard2-pulse"></i> Administrativo</div>
+        <div class="rol-chip"><i class="bi bi-bandaid"></i> Auxiliar Médico</div>
+    </div>
+</div>
+
+<!-- Panel Derecho: Formulario de Login -->
+<div class="panel-derecho">
+    <form class="form-login" method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+
+        <i class="bi bi-hospital-fill logo-small"></i>
+        <h2>Bienvenido</h2>
+        <p class="subtitulo">Ingrese sus credenciales y seleccione su rol</p>
+
+        <!-- Mensaje de error -->
+        {% if error %}
+        <div class="alerta-error">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- Campo: Usuario -->
+        <div class="input-group-custom">
+            <label for="username">Usuario</label>
+            <div class="input-wrapper">
+                <i class="bi bi-person icono-campo"></i>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Nombre de usuario"
+                    value="{{ request.POST.username|default:'' }}"
+                    required
+                    autocomplete="username"
+                >
+            </div>
+        </div>
+
+        <!-- Campo: Contraseña -->
+        <div class="input-group-custom">
+            <label for="password">Contraseña</label>
+            <div class="input-wrapper">
+                <i class="bi bi-lock icono-campo"></i>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="••••••••"
+                    required
+                    autocomplete="current-password"
+                >
+            </div>
+        </div>
+
+        <!-- Campo: ROL (REQUERIDO) -->
+        <div class="input-group-custom">
+            <label for="rol">Rol de Acceso <span style="color:#e74c3c">*</span></label>
+            <div class="input-wrapper">
+                <i class="bi bi-shield-lock icono-campo"></i>
+                <select id="rol" name="rol" required>
+                    <option value="" disabled {% if not rol_seleccionado %}selected{% endif %}>
+                        — Seleccione su rol —
+                    </option>
+                    {% for valor, etiqueta in roles.items %}
+                    <option value="{{ valor }}" {% if rol_seleccionado == valor %}selected{% endif %}>
+                        {{ etiqueta }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Botón Ingresar -->
+        <button type="submit" class="btn-ingresar">
+            <i class="bi bi-box-arrow-in-right"></i>
+            Ingresar al Sistema
+        </button>
+
+        <!-- Nota académica -->
+        <div class="nota-academica">
+            <strong>📚 Nota académica:</strong> El rol seleccionado determina los permisos
+            en la base de datos Oracle XE 18c a través del usuario correspondiente.
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
