@@ -35,10 +35,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Terceros
+    'crispy_forms',
+    'crispy_bootstrap5',
     # Aplicaciones del proyecto
     'citas',          # App principal del sistema de citas
     'usuarios',       # Gestión de usuarios y autenticación
 ]
+
+# Crispy Forms (Bootstrap 5)
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # ===========================================================
 # MIDDLEWARE
@@ -64,7 +71,10 @@ ROOT_URLCONF = 'gestion_citas.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Templates globales del proyecto
+        'DIRS': [
+            BASE_DIR / 'templates',
+            BASE_DIR / 'gestion_citas' / 'templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -96,19 +106,28 @@ WSGI_APPLICATION = 'gestion_citas.wsgi.application'
 #   auxiliar_medico → usr_auxiliar    (SELECT + INSERT + UPDATE)
 # ===========================================================
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.oracle',
-        'NAME': 'localhost:1521/XEPDB1',  # SID de la PDB en Oracle XE 18c
-        'USER': 'app_citas',
-        'PASSWORD': 'Citas2024#',
-        'OPTIONS': {
-            'threaded': True,
-        },
-        # Esquema propietario de las tablas
-        'SCHEMA': 'APP_CITAS',
+# Modo dev local: USE_SQLITE=1 usa SQLite para poder levantar el server
+# sin necesidad de tener Oracle XE corriendo. En producción NO definir esa var.
+USE_SQLITE = os.environ.get('USE_SQLITE') == '1'
+
+if USE_SQLITE:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db_dev.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.oracle',
+            'NAME': 'localhost:1521/XEPDB1',  # SID de la PDB en Oracle XE 18c
+            'USER': 'app_citas',
+            'PASSWORD': 'Citas2024#',
+            # Esquema propietario de las tablas
+            'SCHEMA': 'APP_CITAS',
+        }
+    }
 
 # Configuraciones de conexión adicionales por rol
 # Estas se usan en citas/db_router.py para conexión dinámica

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block titulo %}Médicos{% endblock %}
+{% block page_title %}Gestión de Médicos{% endblock %}
+
+{% block contenido %}
+<div class="table-container">
+    <div class="table-header">
+        <div>
+            <h5 class="mb-0" style="font-family:'Nunito',sans-serif;font-weight:700;">
+                <i class="bi bi-person-badge me-2 text-primary"></i>Médicos
+            </h5>
+            <small class="text-muted">{{ total_registros }} registro(s)</small>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+            <form method="get" class="d-flex gap-2">
+                <select name="especialidad" class="form-select form-select-sm" style="width:160px;">
+                    <option value="">Todas las especialidades</option>
+                    {% for esp in especialidades %}
+                    <option value="{{ esp.id_especialidad }}" {% if especialidad_seleccionada == esp.id_especialidad|stringformat:"s" %}selected{% endif %}>{{ esp.nombre_especialidad }}</option>
+                    {% endfor %}
+                </select>
+                <input type="text" name="q" value="{{ busqueda }}" class="form-control form-control-sm" placeholder="Buscar..." style="width:180px;">
+                <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-search"></i></button>
+                {% if busqueda or especialidad_seleccionada %}<a href="?" class="btn btn-sm btn-outline-danger"><i class="bi bi-x"></i></a>{% endif %}
+            </form>
+            {% if puede_crear %}
+            <a href="{% url 'medicos_crear' %}" class="btn-crear btn">
+                <i class="bi bi-plus-lg me-1"></i> Nuevo
+            </a>
+            {% else %}
+            <span class="badge bg-secondary p-2"><i class="bi bi-lock-fill me-1"></i>Sin permiso</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre Completo</th>
+                    <th>Nº Documento</th>
+                    <th>Especialidad</th>
+                    <th>Nº Registro</th>
+                    <th>Estado</th>
+                    <th style="width:150px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for med in medicos %}
+                <tr>
+                    <td><small class="text-muted">{{ med.id_medico }}</small></td>
+                    <td><strong>{{ med.nombre_completo }}</strong></td>
+                    <td><code>{{ med.id_persona.tipo_documento }} {{ med.id_persona.numero_documento }}</code></td>
+                    <td><span class="badge bg-info text-dark">{{ med.id_especialidad.nombre_especialidad }}</span></td>
+                    <td><code>{{ med.numero_registro }}</code></td>
+                    <td>
+                        {% if med.activo == 'S' %}
+                        <span class="badge badge-activo rounded-pill px-2 py-1">Activo</span>
+                        {% else %}
+                        <span class="badge badge-inactivo rounded-pill px-2 py-1">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'medicos_detalle' med.id_medico %}" class="btn btn-accion btn-outline-info" title="Ver"><i class="bi bi-eye"></i></a>
+                        {% if puede_editar %}
+                        <a href="{% url 'medicos_editar' med.id_medico %}" class="btn btn-accion btn-outline-warning" title="Editar"><i class="bi bi-pencil"></i></a>
+                        {% endif %}
+                        {% if puede_eliminar %}
+                        <a href="{% url 'medicos_eliminar' med.id_medico %}" class="btn btn-accion btn-outline-danger" title="Desactivar"><i class="bi bi-trash3"></i></a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" class="text-center text-muted py-4"><i class="bi bi-inbox" style="font-size:2rem;display:block;margin-bottom:.5rem;"></i>No se encontraron médicos</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if medicos.has_other_pages %}
+    <div class="d-flex justify-content-between align-items-center px-3 py-2" style="border-top:1px solid #f0f4f8;">
+        <small class="text-muted">Página {{ medicos.number }} de {{ medicos.paginator.num_pages }}</small>
+        <nav><ul class="pagination pagination-sm mb-0">
+            {% if medicos.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ medicos.previous_page_number }}&q={{ busqueda }}&especialidad={{ especialidad_seleccionada }}"><i class="bi bi-chevron-left"></i></a></li>{% endif %}
+            {% for num in medicos.paginator.page_range %}
+                {% if medicos.number == num %}<li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > medicos.number|add:'-3' and num < medicos.number|add:'3' %}<li class="page-item"><a class="page-link" href="?page={{ num }}&q={{ busqueda }}&especialidad={{ especialidad_seleccionada }}">{{ num }}</a></li>{% endif %}
+            {% endfor %}
+            {% if medicos.has_next %}<li class="page-item"><a class="page-link" href="?page={{ medicos.next_page_number }}&q={{ busqueda }}&especialidad={{ especialidad_seleccionada }}"><i class="bi bi-chevron-right"></i></a></li>{% endif %}
+        </ul></nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

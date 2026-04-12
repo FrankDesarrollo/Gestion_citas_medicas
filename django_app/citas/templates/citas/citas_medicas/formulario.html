@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card">
+            <div class="card-header d-flex align-items-center gap-2">
+                <i class="bi bi-{% if accion == 'Crear' %}plus-circle{% else %}pencil-square{% endif %} text-primary"></i>
+                <strong>{{ titulo }}</strong>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <!-- Sección: Quién, Cuándo, Dónde -->
+                        <div class="col-md-4">
+                            <label class="form-label">{{ form.id_paciente.label }} <span class="text-danger">*</span></label>
+                            {{ form.id_paciente }}
+                            {% for error in form.id_paciente.errors %}
+                            <div class="invalid-feedback d-block"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">{{ form.id_medico.label }} <span class="text-danger">*</span></label>
+                            {{ form.id_medico }}
+                            {% for error in form.id_medico.errors %}
+                            <div class="invalid-feedback d-block"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">{{ form.id_consultorio.label }} <span class="text-danger">*</span></label>
+                            {{ form.id_consultorio }}
+                            {% for error in form.id_consultorio.errors %}
+                            <div class="invalid-feedback d-block"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Fecha y Horas -->
+                        <div class="col-md-4">
+                            <label class="form-label">{{ form.fecha_cita.label }} <span class="text-danger">*</span></label>
+                            {{ form.fecha_cita }}
+                            {% for error in form.fecha_cita.errors %}
+                            <div class="invalid-feedback d-block"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">{{ form.hora_inicio.label }} <span class="text-danger">*</span></label>
+                            {{ form.hora_inicio }}
+                            {% for error in form.hora_inicio.errors %}
+                            <div class="invalid-feedback d-block"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">{{ form.hora_fin.label }} <span class="text-danger">*</span></label>
+                            {{ form.hora_fin }}
+                            {% for error in form.hora_fin.errors %}
+                            <div class="invalid-feedback d-block"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Motivo de consulta -->
+                        <div class="col-12">
+                            <label class="form-label">{{ form.motivo_consulta.label }}</label>
+                            {{ form.motivo_consulta }}
+                            {% for error in form.motivo_consulta.errors %}
+                            <div class="invalid-feedback d-block"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Estado (solo en edición) -->
+                        {% if accion == 'Actualizar' %}
+                        <div class="col-md-3">
+                            <label class="form-label">{{ form.estado.label }}</label>
+                            {{ form.estado }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex gap-2 justify-content-end">
+                        <a href="{% url url_cancelar %}" class="btn btn-outline-secondary"><i class="bi bi-x-circle me-1"></i> Cancelar</a>
+                        <button type="submit" class="btn" style="background:var(--color-primario, #1a5276); color:white;">
+                            <i class="bi bi-{% if accion == 'Crear' %}plus-lg{% else %}check-lg{% endif %} me-1"></i> {{ accion }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

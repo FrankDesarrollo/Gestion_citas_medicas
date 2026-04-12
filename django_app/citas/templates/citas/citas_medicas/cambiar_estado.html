@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header d-flex align-items-center gap-2">
+                <i class="bi bi-arrow-repeat text-success"></i>
+                <strong>{{ titulo }}</strong>
+            </div>
+            <div class="card-body p-4">
+                <!-- Info de la cita actual -->
+                <div class="alert alert-info mb-4">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <strong>Paciente:</strong> {{ cita.id_paciente.nombre_completo }}<br>
+                            <strong>Médico:</strong> {{ cita.id_medico.nombre_completo }}
+                        </div>
+                        <div class="col-sm-6">
+                            <strong>Fecha:</strong> {{ cita.fecha_cita|date:"d/m/Y" }}<br>
+                            <strong>Horario:</strong> {{ cita.hora_inicio }} — {{ cita.hora_fin }}<br>
+                            <strong>Estado actual:</strong>
+                            {% if cita.estado == 'PROGRAMADA' %}<span class="badge bg-primary">Programada</span>
+                            {% elif cita.estado == 'CONFIRMADA' %}<span class="badge bg-success">Confirmada</span>
+                            {% elif cita.estado == 'ATENDIDA' %}<span class="badge bg-dark">Atendida</span>
+                            {% elif cita.estado == 'NO_ASISTIO' %}<span class="badge bg-warning text-dark">No Asistió</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transiciones disponibles -->
+                {% if estados_permitidos %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Transiciones permitidas desde "{{ cita.estado }}":</label>
+                    <div class="d-flex gap-2 mb-3">
+                        {% for estado in estados_permitidos %}
+                        <span class="badge bg-success fs-6 px-3 py-2">{{ estado }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {{ form|crispy }}
+
+                    <hr class="my-4">
+
+                    <div class="d-flex gap-2 justify-content-end">
+                        <a href="{% url 'citas_detalle' cita.id_cita %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle me-1"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-lg me-1"></i> Confirmar Cambio
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
