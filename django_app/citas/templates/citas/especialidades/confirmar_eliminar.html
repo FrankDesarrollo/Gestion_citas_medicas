@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white d-flex align-items-center gap-2">
+                <i class="bi bi-exclamation-triangle-fill"></i><strong>{{ titulo }}</strong>
+            </div>
+            <div class="card-body text-center p-4">
+                <i class="bi bi-trash3-fill text-danger" style="font-size:3rem;"></i>
+                <h5 class="mt-3 mb-2">¿Está seguro?</h5>
+                <p class="text-muted">Esta acción <strong>desactivará</strong> el registro (soft delete).</p>
+                <div class="alert alert-warning text-start">
+                    <strong>Especialidad:</strong> {{ especialidad.nombre_especialidad }}<br>
+                    <strong>Código:</strong> {{ especialidad.codigo_especialidad }}
+                </div>
+                <form method="post">{% csrf_token %}
+                    <div class="d-flex gap-2 justify-content-center mt-3">
+                        <a href="{% url 'especialidades_lista' %}" class="btn btn-outline-secondary"><i class="bi bi-x-circle me-1"></i> Cancelar</a>
+                        <button type="submit" class="btn btn-danger"><i class="bi bi-trash3 me-1"></i> Sí, desactivar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

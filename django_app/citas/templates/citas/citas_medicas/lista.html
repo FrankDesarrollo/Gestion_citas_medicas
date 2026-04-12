@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block titulo %}Citas Médicas{% endblock %}
+{% block page_title %}Gestión de Citas Médicas{% endblock %}
+
+{% block contenido %}
+<div class="table-container">
+    <div class="table-header">
+        <div>
+            <h5 class="mb-0" style="font-family:'Nunito',sans-serif;font-weight:700;">
+                <i class="bi bi-calendar-check me-2 text-primary"></i>Citas Médicas
+            </h5>
+            <small class="text-muted">{{ total_registros }} registro(s)</small>
+        </div>
+        <div class="d-flex gap-2 align-items-center flex-wrap">
+            <form method="get" class="d-flex gap-2 flex-wrap">
+                <input type="date" name="fecha" value="{{ fecha_seleccionada }}" class="form-control form-control-sm" style="width:150px;" title="Filtrar por fecha">
+                <select name="estado" class="form-select form-select-sm" style="width:140px;">
+                    <option value="">Todos los estados</option>
+                    <option value="PROGRAMADA" {% if estado_seleccionado == 'PROGRAMADA' %}selected{% endif %}>Programada</option>
+                    <option value="CONFIRMADA" {% if estado_seleccionado == 'CONFIRMADA' %}selected{% endif %}>Confirmada</option>
+                    <option value="ATENDIDA" {% if estado_seleccionado == 'ATENDIDA' %}selected{% endif %}>Atendida</option>
+                    <option value="CANCELADA" {% if estado_seleccionado == 'CANCELADA' %}selected{% endif %}>Cancelada</option>
+                    <option value="NO_ASISTIO" {% if estado_seleccionado == 'NO_ASISTIO' %}selected{% endif %}>No Asistió</option>
+                </select>
+                <input type="text" name="q" value="{{ busqueda }}" class="form-control form-control-sm" placeholder="Buscar..." style="width:160px;">
+                <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-search"></i></button>
+                {% if busqueda or estado_seleccionado or fecha_seleccionada %}<a href="?" class="btn btn-sm btn-outline-danger"><i class="bi bi-x"></i></a>{% endif %}
+            </form>
+            {% if puede_crear %}
+            <a href="{% url 'citas_crear' %}" class="btn-crear btn">
+                <i class="bi bi-plus-lg me-1"></i> Nueva Cita
+            </a>
+            {% else %}
+            <span class="badge bg-secondary p-2"><i class="bi bi-lock-fill me-1"></i>Sin permiso</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Nº Cita</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Paciente</th>
+                    <th>Médico</th>
+                    <th>Especialidad</th>
+                    <th>Estado</th>
+                    <th style="width:180px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cita in citas %}
+                <tr>
+                    <td><code>{{ cita.numero_cita }}</code></td>
+                    <td>{{ cita.fecha_cita|date:"d/m/Y" }}</td>
+                    <td>{{ cita.hora_inicio }} - {{ cita.hora_fin }}</td>
+                    <td><strong>{{ cita.id_paciente.nombre_completo }}</strong></td>
+                    <td>{{ cita.id_medico.nombre_completo }}</td>
+                    <td><span class="badge bg-info text-dark">{{ cita.id_medico.id_especialidad.nombre_especialidad }}</span></td>
+                    <td>
+                        {% if cita.estado == 'PROGRAMADA' %}
+                        <span class="badge bg-primary">Programada</span>
+                        {% elif cita.estado == 'CONFIRMADA' %}
+                        <span class="badge bg-success">Confirmada</span>
+                        {% elif cita.estado == 'ATENDIDA' %}
+                        <span class="badge bg-dark">Atendida</span>
+                        {% elif cita.estado == 'CANCELADA' %}
+                        <span class="badge bg-danger">Cancelada</span>
+                        {% elif cita.estado == 'NO_ASISTIO' %}
+                        <span class="badge bg-warning text-dark">No Asistió</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'citas_detalle' cita.id_cita %}" class="btn btn-accion btn-outline-info" title="Ver"><i class="bi bi-eye"></i></a>
+                        {% if puede_editar %}
+                        <a href="{% url 'citas_editar' cita.id_cita %}" class="btn btn-accion btn-outline-warning" title="Editar"><i class="bi bi-pencil"></i></a>
+                        {% endif %}
+                        {% if puede_cambiar_estado or rol == 'medico' %}
+                        <a href="{% url 'citas_cambiar_estado' cita.id_cita %}" class="btn btn-accion btn-outline-success" title="Cambiar Estado"><i class="bi bi-arrow-repeat"></i></a>
+                        {% endif %}
+                        {% if puede_eliminar %}
+                        <a href="{% url 'citas_eliminar' cita.id_cita %}" class="btn btn-accion btn-outline-danger" title="Cancelar"><i class="bi bi-x-circle"></i></a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8" class="text-center text-muted py-4"><i class="bi bi-inbox" style="font-size:2rem;display:block;margin-bottom:.5rem;"></i>No se encontraron citas médicas</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if citas.has_other_pages %}
+    <div class="d-flex justify-content-between align-items-center px-3 py-2" style="border-top:1px solid #f0f4f8;">
+        <small class="text-muted">Página {{ citas.number }} de {{ citas.paginator.num_pages }}</small>
+        <nav><ul class="pagination pagination-sm mb-0">
+            {% if citas.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ citas.previous_page_number }}&q={{ busqueda }}&estado={{ estado_seleccionado }}&fecha={{ fecha_seleccionada }}"><i class="bi bi-chevron-left"></i></a></li>{% endif %}
+            {% for num in citas.paginator.page_range %}
+                {% if citas.number == num %}<li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > citas.number|add:'-3' and num < citas.number|add:'3' %}<li class="page-item"><a class="page-link" href="?page={{ num }}&q={{ busqueda }}&estado={{ estado_seleccionado }}&fecha={{ fecha_seleccionada }}">{{ num }}</a></li>{% endif %}
+            {% endfor %}
+            {% if citas.has_next %}<li class="page-item"><a class="page-link" href="?page={{ citas.next_page_number }}&q={{ busqueda }}&estado={{ estado_seleccionado }}&fecha={{ fecha_seleccionada }}"><i class="bi bi-chevron-right"></i></a></li>{% endif %}
+        </ul></nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

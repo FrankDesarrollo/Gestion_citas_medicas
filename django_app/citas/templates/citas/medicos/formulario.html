@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block page_title %}{{ titulo }}{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <!-- Sección: Datos de la Persona -->
+            <div class="card mb-3">
+                <div class="card-header d-flex align-items-center gap-2">
+                    <i class="bi bi-person-vcard text-primary"></i>
+                    <strong>Datos Personales</strong>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">{{ persona_form.tipo_documento.label }} <span class="text-danger">*</span></label>
+                            {{ persona_form.tipo_documento }}
+                            {% for error in persona_form.tipo_documento.errors %}
+                            <div class="invalid-feedback d-block"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">{{ persona_form.numero_documento.label }} <span class="text-danger">*</span></label>
+                            {{ persona_form.numero_documento }}
+                            {% for error in persona_form.numero_documento.errors %}
+                            <div class="invalid-feedback d-block"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">{{ persona_form.email.label }}</label>
+                            {{ persona_form.email }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">{{ persona_form.primer_nombre.label }} <span class="text-danger">*</span></label>
+                            {{ persona_form.primer_nombre }}
+                            {% for error in persona_form.primer_nombre.errors %}
+                            <div class="invalid-feedback d-block"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">{{ persona_form.segundo_nombre.label }}</label>
+                            {{ persona_form.segundo_nombre }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">{{ persona_form.primer_apellido.label }} <span class="text-danger">*</span></label>
+                            {{ persona_form.primer_apellido }}
+                            {% for error in persona_form.primer_apellido.errors %}
+                            <div class="invalid-feedback d-block"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">{{ persona_form.segundo_apellido.label }}</label>
+                            {{ persona_form.segundo_apellido }}
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">{{ persona_form.fecha_nacimiento.label }}</label>
+                            {{ persona_form.fecha_nacimiento }}
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">{{ persona_form.sexo.label }}</label>
+                            {{ persona_form.sexo }}
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">{{ persona_form.telefono.label }}</label>
+                            {{ persona_form.telefono }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">{{ persona_form.id_municipio.label }}</label>
+                            {{ persona_form.id_municipio }}
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">{{ persona_form.activo.label }}</label>
+                            {{ persona_form.activo }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Datos del Médico -->
+            <div class="card mb-3">
+                <div class="card-header d-flex align-items-center gap-2">
+                    <i class="bi bi-person-badge text-success"></i>
+                    <strong>Datos del Médico</strong>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">{{ medico_form.id_especialidad.label }} <span class="text-danger">*</span></label>
+                            {{ medico_form.id_especialidad }}
+                            {% for error in medico_form.id_especialidad.errors %}
+                            <div class="invalid-feedback d-block"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">{{ medico_form.numero_registro.label }} <span class="text-danger">*</span></label>
+                            {{ medico_form.numero_registro }}
+                            {% for error in medico_form.numero_registro.errors %}
+                            <div class="invalid-feedback d-block"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">{{ medico_form.tarifa_consulta.label }}</label>
+                            {{ medico_form.tarifa_consulta }}
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">{{ medico_form.activo.label }}</label>
+                            {{ medico_form.activo }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="card">
+                <div class="card-body d-flex gap-2 justify-content-end">
+                    <a href="{% url url_cancelar %}" class="btn btn-outline-secondary"><i class="bi bi-x-circle me-1"></i> Cancelar</a>
+                    <button type="submit" class="btn" style="background:var(--color-primario, #1a5276); color:white;">
+                        <i class="bi bi-{% if accion == 'Crear' %}plus-lg{% else %}check-lg{% endif %} me-1"></i> {{ accion }}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

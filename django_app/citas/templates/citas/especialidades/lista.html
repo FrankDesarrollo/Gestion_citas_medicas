@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block titulo %}Especialidades{% endblock %}
+{% block page_title %}Gestión de Especialidades Médicas{% endblock %}
+
+{% block contenido %}
+<div class="table-container">
+    <div class="table-header">
+        <div>
+            <h5 class="mb-0" style="font-family:'Nunito',sans-serif;font-weight:700;">
+                <i class="bi bi-heart-pulse me-2 text-primary"></i>Especialidades Médicas
+            </h5>
+            <small class="text-muted">{{ total_registros }} registro(s)</small>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+            <form method="get" class="d-flex gap-2">
+                <input type="text" name="q" value="{{ busqueda }}" class="form-control form-control-sm" placeholder="Buscar..." style="width:180px;">
+                <button type="submit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-search"></i></button>
+                {% if busqueda %}<a href="?" class="btn btn-sm btn-outline-danger"><i class="bi bi-x"></i></a>{% endif %}
+            </form>
+            {% if puede_crear %}
+            <a href="{% url 'especialidades_crear' %}" class="btn-crear btn">
+                <i class="bi bi-plus-lg me-1"></i> Nueva
+            </a>
+            {% else %}
+            <span class="badge bg-secondary p-2"><i class="bi bi-lock-fill me-1"></i>Sin permiso para crear</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Código</th>
+                    <th>Nombre Especialidad</th>
+                    <th>Estado</th>
+                    <th>Fecha Creación</th>
+                    <th style="width:150px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for esp in especialidades %}
+                <tr>
+                    <td><small class="text-muted">{{ esp.id_especialidad }}</small></td>
+                    <td><code>{{ esp.codigo_especialidad }}</code></td>
+                    <td><strong>{{ esp.nombre_especialidad }}</strong></td>
+                    <td>
+                        {% if esp.activo == 'S' %}
+                        <span class="badge badge-activo rounded-pill px-2 py-1">Activo</span>
+                        {% else %}
+                        <span class="badge badge-inactivo rounded-pill px-2 py-1">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td><small>{{ esp.fecha_creacion|date:"d/m/Y" }}</small></td>
+                    <td>
+                        <a href="{% url 'especialidades_detalle' esp.id_especialidad %}" class="btn btn-accion btn-outline-info" title="Ver detalle">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        {% if puede_editar %}
+                        <a href="{% url 'especialidades_editar' esp.id_especialidad %}" class="btn btn-accion btn-outline-warning" title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        {% endif %}
+                        {% if puede_eliminar %}
+                        <a href="{% url 'especialidades_eliminar' esp.id_especialidad %}" class="btn btn-accion btn-outline-danger" title="Desactivar">
+                            <i class="bi bi-trash3"></i>
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        <i class="bi bi-inbox" style="font-size:2rem; display:block; margin-bottom:.5rem;"></i>
+                        No se encontraron especialidades
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if especialidades.has_other_pages %}
+    <div class="d-flex justify-content-between align-items-center px-3 py-2" style="border-top:1px solid #f0f4f8;">
+        <small class="text-muted">Página {{ especialidades.number }} de {{ especialidades.paginator.num_pages }}</small>
+        <nav><ul class="pagination pagination-sm mb-0">
+            {% if especialidades.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ especialidades.previous_page_number }}&q={{ busqueda }}"><i class="bi bi-chevron-left"></i></a></li>
+            {% endif %}
+            {% for num in especialidades.paginator.page_range %}
+                {% if especialidades.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > especialidades.number|add:'-3' and num < especialidades.number|add:'3' %}
+                <li class="page-item"><a class="page-link" href="?page={{ num }}&q={{ busqueda }}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if especialidades.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ especialidades.next_page_number }}&q={{ busqueda }}"><i class="bi bi-chevron-right"></i></a></li>
+            {% endif %}
+        </ul></nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

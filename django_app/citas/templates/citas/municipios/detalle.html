@@ -6,23 +6,55 @@
   <div class="col-lg-8">
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
-        <strong>{{ titulo }}</strong>
+        <strong><i class="bi bi-building me-2"></i>{{ titulo }}</strong>
         {% if puede_editar %}
-        {% with obj=municipio|default:sede|default:consultorio %}
-        {% if municipio %}<a href="{% url 'municipios_editar' municipio.id_municipio %}" class="btn btn-sm btn-warning"><i class="bi bi-pencil me-1"></i>Editar</a>{% endif %}
-        {% if sede %}<a href="{% url 'sedes_editar' sede.id_sede %}" class="btn btn-sm btn-warning"><i class="bi bi-pencil me-1"></i>Editar</a>{% endif %}
-        {% if consultorio %}<a href="{% url 'consultorios_editar' consultorio.id_consultorio %}" class="btn btn-sm btn-warning"><i class="bi bi-pencil me-1"></i>Editar</a>{% endif %}
-        {% endwith %}
+        <a href="{% url 'municipios_editar' municipio.id_municipio %}" class="btn btn-sm btn-warning">
+          <i class="bi bi-pencil me-1"></i>Editar
+        </a>
         {% endif %}
       </div>
       <div class="card-body">
-        <dl class="row">
-          {% for field in object.fields %}<dt class="col-sm-4 text-muted" style="font-size:.8rem;text-transform:uppercase;">{{ field.verbose_name }}</dt><dd class="col-sm-8">{{ field.value_to_string }}</dd>{% endfor %}
+        <dl class="row mb-0">
+          <dt class="col-sm-4 text-muted" style="font-size:.8rem;text-transform:uppercase;">Código DANE</dt>
+          <dd class="col-sm-8">{{ municipio.codigo_dane }}</dd>
+
+          <dt class="col-sm-4 text-muted" style="font-size:.8rem;text-transform:uppercase;">Nombre</dt>
+          <dd class="col-sm-8">{{ municipio.nombre_municipio }}</dd>
+
+          <dt class="col-sm-4 text-muted" style="font-size:.8rem;text-transform:uppercase;">Departamento</dt>
+          <dd class="col-sm-8">
+            <a href="{% url 'departamentos_detalle' municipio.id_departamento.id_departamento %}">
+              {{ municipio.id_departamento.nombre_departamento }}
+            </a>
+          </dd>
+
+          <dt class="col-sm-4 text-muted" style="font-size:.8rem;text-transform:uppercase;">Estado</dt>
+          <dd class="col-sm-8">
+            {% if municipio.activo == 'S' %}
+            <span class="badge bg-success">Activo</span>
+            {% else %}
+            <span class="badge bg-danger">Inactivo</span>
+            {% endif %}
+          </dd>
+
+          <dt class="col-sm-4 text-muted" style="font-size:.8rem;text-transform:uppercase;">Fecha Creación</dt>
+          <dd class="col-sm-8">{{ municipio.fecha_creacion|date:"d/m/Y" }}</dd>
+
+          {% if municipio.fecha_modificacion %}
+          <dt class="col-sm-4 text-muted" style="font-size:.8rem;text-transform:uppercase;">Fecha Modificación</dt>
+          <dd class="col-sm-8">{{ municipio.fecha_modificacion|date:"d/m/Y" }}</dd>
+          {% endif %}
+
+          <dt class="col-sm-4 text-muted" style="font-size:.8rem;text-transform:uppercase;">Usuario Creación</dt>
+          <dd class="col-sm-8">{{ municipio.usuario_creacion }}</dd>
         </dl>
-        <div class="text-end mt-3">
-          <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i>Volver</a>
-        </div>
       </div>
+    </div>
+
+    <div class="text-end mt-3">
+      <a href="{% url 'municipios_lista' %}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Volver a la lista
+      </a>
     </div>
   </div>
 </div>
