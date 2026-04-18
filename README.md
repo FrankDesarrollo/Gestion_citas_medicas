@@ -146,4 +146,12 @@ python manage.py shell                  # Shell interactivo
 
 ---
 
+## 👥 Contribuidores
+
+| Nombre | GitHub | Rol |
+|--------|--------|-----|
+| **Erick** | [@developer_erick](https://github.com/developer_erick) | Desarrollador |
+
+---
+
 *Materia: Electiva I, II, III y IV — Sistema de Gestión de Citas Médicas*
