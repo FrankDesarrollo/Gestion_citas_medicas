@@ -17,6 +17,7 @@ from citas.models import (
     Departamento, Municipio, Sede, Consultorio,
     Especialidad, Persona, Medico, Paciente, CitaMedica,
 )
+from permisos.models import Modulo, PermisoRol
 
 USUARIO = 'seed'
 
@@ -185,6 +186,36 @@ for i, (pac, med, cons, f, hi, hf, est, motivo) in enumerate(citas_data, start=1
     )
 
 # ============================================================
+# PERMISOS POR ROL (Fase 1 - Erick)
+# Sincroniza los módulos y permisos por defecto (idempotente)
+# ============================================================
+print('>> Sincronizando módulos y permisos...')
+MODULOS_DEF = [
+    ('departamentos', 'Departamentos'),
+    ('municipios',    'Municipios'),
+    ('sedes',         'Sedes'),
+    ('consultorios',  'Consultorios'),
+    ('especialidades', 'Especialidades'),
+    ('medicos',       'Médicos'),
+    ('pacientes',     'Pacientes'),
+    ('citas',         'Citas Médicas'),
+    ('auditoria',     'Auditoría'),
+]
+for codigo, nombre in MODULOS_DEF:
+    m, _ = Modulo.objects.get_or_create(codigo=codigo, defaults={'nombre': nombre, 'activo': 'S'})
+    for rol in ['administrativo', 'medico', 'paciente', 'auxiliar_medico']:
+        es_admin = rol == 'administrativo'
+        PermisoRol.objects.get_or_create(
+            rol=rol, modulo=m,
+            defaults={
+                'puede_ver': True,
+                'puede_crear': es_admin,
+                'puede_editar': es_admin,
+                'puede_eliminar': es_admin,
+            },
+        )
+
+# ============================================================
 # RESUMEN
 # ============================================================
 print()
@@ -201,4 +232,6 @@ print(f'  Personas         : {Persona.objects.count()}')
 print(f'  Medicos          : {Medico.objects.count()}')
 print(f'  Pacientes        : {Paciente.objects.count()}')
 print(f'  Citas Medicas    : {CitaMedica.objects.count()}')
+print(f'  Modulos permisos : {Modulo.objects.count()}')
+print(f'  Permisos por rol : {PermisoRol.objects.count()}')
 print('=' * 60)

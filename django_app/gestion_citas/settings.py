@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # Aplicaciones del proyecto
     'citas',          # App principal del sistema de citas
     'usuarios',       # Gestión de usuarios y autenticación
+    'permisos',       # Gestión de roles y permisos por módulo
 ]
 
 # Crispy Forms (Bootstrap 5)
