@@ -17,6 +17,9 @@ urlpatterns = [
 
     # Módulo principal de citas (menú + CRUDs)
     path('', include('citas.urls')),
+
+    # Gestión de roles y permisos
+    path('permisos/', include('permisos.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Personalizar el admin de Django
