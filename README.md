@@ -150,7 +150,7 @@ python manage.py shell                  # Shell interactivo
 
 | Nombre | GitHub | Rol |
 |--------|--------|-----|
-| **Erick** | [@developer_erick](https://github.com/developer_erick) | Desarrollador |
+| **Erick** | [@erickcolin2005](https://github.com/erickcolin2005) | Desarrollador |
 
 ---
 
