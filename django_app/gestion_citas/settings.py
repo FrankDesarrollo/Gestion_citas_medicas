@@ -7,6 +7,7 @@ Base de datos: Oracle XE 18c
 
 import os
 from pathlib import Path
+from decouple import config
 
 # ===========================================================
 # RUTAS BASE
@@ -18,10 +19,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ===========================================================
 # ADVERTENCIA: En producción, esta clave debe ser secreta y
 # almacenarse en variable de entorno
-SECRET_KEY = 'django-insecure-citas-medicas-2024-electiva-oracle-xe18c'
+SECRET_KEY = config('SECRET_KEY')
 
-# En producción cambiar a False
-DEBUG = True
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
@@ -122,40 +122,39 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.oracle',
-            'NAME': 'localhost:1521/XEPDB1',  # SID de la PDB en Oracle XE 18c
-            'USER': 'app_citas',
-            'PASSWORD': 'Citas2024#',
-            # Esquema propietario de las tablas
-            'SCHEMA': 'APP_CITAS',
+            'NAME': config('DB_NAME', default='localhost:1521/XEPDB1'),
+            'USER': config('DB_USER'),
+            'PASSWORD': config('DB_PASSWORD'),
+            'SCHEMA': config('DB_SCHEMA', default='APP_CITAS'),
         }
     }
 
-# Configuraciones de conexión adicionales por rol
-# Estas se usan en citas/db_router.py para conexión dinámica
+_DB_NAME = config('DB_NAME', default='localhost:1521/XEPDB1')
+
 DB_CONNECTIONS_POR_ROL = {
     'medico': {
         'ENGINE': 'django.db.backends.oracle',
-        'NAME': 'localhost:1521/XEPDB1',
-        'USER': 'usr_medico',
-        'PASSWORD': 'Med2024#',
+        'NAME': _DB_NAME,
+        'USER': config('DB_MEDICO_USER', default='usr_medico'),
+        'PASSWORD': config('DB_MEDICO_PASSWORD'),
     },
     'paciente': {
         'ENGINE': 'django.db.backends.oracle',
-        'NAME': 'localhost:1521/XEPDB1',
-        'USER': 'usr_paciente',
-        'PASSWORD': 'Pac2024#',
+        'NAME': _DB_NAME,
+        'USER': config('DB_PACIENTE_USER', default='usr_paciente'),
+        'PASSWORD': config('DB_PACIENTE_PASSWORD'),
     },
     'administrativo': {
         'ENGINE': 'django.db.backends.oracle',
-        'NAME': 'localhost:1521/XEPDB1',
-        'USER': 'usr_administrativo',
-        'PASSWORD': 'Adm2024#',
+        'NAME': _DB_NAME,
+        'USER': config('DB_ADMINISTRATIVO_USER', default='usr_administrativo'),
+        'PASSWORD': config('DB_ADMINISTRATIVO_PASSWORD'),
     },
     'auxiliar_medico': {
         'ENGINE': 'django.db.backends.oracle',
-        'NAME': 'localhost:1521/XEPDB1',
-        'USER': 'usr_auxiliar',
-        'PASSWORD': 'Aux2024#',
+        'NAME': _DB_NAME,
+        'USER': config('DB_AUXILIAR_USER', default='usr_auxiliar'),
+        'PASSWORD': config('DB_AUXILIAR_PASSWORD'),
     },
 }
 
